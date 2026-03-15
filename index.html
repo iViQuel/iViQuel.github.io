@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Victor Koenig — Géographie & Aménagement du Territoire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #1a1a18;
+      --paper: #f4f1eb;
+      --cream: #ede9df;
+      --accent: #c0392b;
+      --accent2: #2c5f8a;
+      --muted: #7a7167;
+      --border: #d4cfc4;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(244, 241, 235, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 70px;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem 6rem 5rem;
+      position: relative;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 6vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-name span {
+      display: block;
+      color: var(--accent2);
+    }
+
+    .hero-subtitle {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 1.5rem;
+      max-width: 380px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.8rem;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      border: 1.5px solid var(--ink);
+      color: var(--ink);
+      transition: all 0.2s;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .btn:hover { background: var(--ink); color: var(--paper); }
+
+    .btn-fill {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-fill:hover { background: #a93226; border-color: #a93226; color: #fff; }
+
+    .hero-right {
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1.2s ease forwards 0.3s;
+    }
+
+    /* Map-like decorative grid */
+    .hero-map {
+      position: absolute;
+      inset: 0;
+      opacity: 0.07;
+    }
+
+    .hero-map line { stroke: var(--paper); stroke-width: 0.5; }
+    .hero-map circle { fill: none; stroke: var(--paper); stroke-width: 0.5; }
+
+    .hero-badge {
+      position: absolute;
+      bottom: 3rem;
+      left: 3rem;
+      right: 3rem;
+    }
+
+    .hero-badge-inner {
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 2rem;
+      color: var(--paper);
+    }
+
+    .badge-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .badge-text {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .badge-text em {
+      font-style: normal;
+      color: #e8a87c;
+    }
+
+    /* ─── SECTIONS COMMUNES ─── */
+    section { padding: 7rem 5rem; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .section-num {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── PROFIL ─── */
+    #profil {
+      background: var(--cream);
+      padding: 7rem 5rem;
+    }
+
+    .profil-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .profil-intro {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    .profil-intro strong {
+      color: var(--accent);
+    }
+
+    .profil-body {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .skills-block { }
+
+    .skill-group {
+      margin-bottom: 2rem;
+    }
+
+    .skill-group-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      background: var(--paper);
+      letter-spacing: 0.02em;
+    }
+
+    .tag-dark {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    /* ─── TRAVAUX ─── */
+    #travaux { background: var(--paper); }
+
+    .travaux-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .travail-card {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 2rem;
+      align-items: start;
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .travail-card:last-child { border-bottom: 1px solid var(--border); }
+
+    .travail-card:hover { background: rgba(44, 95, 138, 0.03); }
+
+    .travail-num {
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--border);
+      line-height: 1;
+      padding-top: 0.3rem;
+    }
+
+    .travail-body { }
+
+    .travail-type {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .travail-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+      color: var(--ink);
+    }
+
+    .travail-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 600px;
+    }
+
+    .travail-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .travail-tag {
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      color: var(--accent2);
+      border: 1px solid rgba(44,95,138,0.25);
+      padding: 0.2rem 0.6rem;
+      letter-spacing: 0.05em;
+    }
+
+    .travail-arrow {
+      font-size: 1.2rem;
+      color: var(--border);
+      padding-top: 0.5rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .travail-card:hover .travail-arrow {
+      transform: translateX(4px);
+      color: var(--accent2);
+    }
+
+    /* ─── EXPÉRIENCE ─── */
+    #experience {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #experience .section-title { color: var(--paper); }
+    #experience .section-line { background: rgba(255,255,255,0.1); }
+    #experience .section-num { color: #e8a87c; }
+
+    .exp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .exp-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 2.5rem;
+      transition: background 0.2s;
+    }
+
+    .exp-item:hover { background: rgba(255,255,255,0.06); }
+
+    .exp-date {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: #e8a87c;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .exp-title {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--paper);
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+    }
+
+    .exp-org {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .exp-desc {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+    }
+
+    .exp-kws {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1.2rem;
+    }
+
+    .exp-kw {
+      font-size: 0.68rem;
+      font-family: var(--mono);
+      color: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.2rem 0.55rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ─── CONTACT ─── */
+    #contact { background: var(--cream); }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .contact-text {}
+
+    .contact-headline {
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-body {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid var(--border);
+      background: var(--paper);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent2);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .contact-link:hover .cl-label,
+    .contact-link:hover .cl-value { color: var(--paper); }
+
+    .cl-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cream);
+      font-size: 1rem;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .contact-link:hover .cl-icon { background: rgba(255,255,255,0.1); }
+
+    .cl-info { flex: 1; }
+
+    .cl-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.1rem;
+      transition: color 0.2s;
+    }
+
+    .cl-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--ink);
+      transition: color 0.2s;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink);
+      padding: 2rem 5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    footer p {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 5rem 2rem 4rem; }
+      section { padding: 5rem 2rem; }
+      #profil { padding: 5rem 2rem; }
+      .profil-grid { grid-template-columns: 1fr; gap: 3rem; }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .travail-card { grid-template-columns: 50px 1fr; }
+      .travail-arrow { display: none; }
+      .exp-grid { grid-template-columns: 1fr; }
+      .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+      footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+      #experience { padding: 5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">Victor Koenig</a>
+    <ul class="nav-links">
+      <li><a href="#profil">Profil</a></li>
+      <li><a href="#travaux">Travaux</a></li>
+      <li><a href="#experience">Parcours</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <p class="hero-tag">— Candidature Master Urbanisme & Aménagement</p>
+      <h1 class="hero-name">
+        Victor<br>
+        <span>Koenig</span>
+      </h1>
+      <p class="hero-subtitle">
+        Étudiant en Licence 3 de Géographie &amp; Aménagement du Territoire à l'Université Paul-Valéry Montpellier III. Approche analytique et opérationnelle du territoire, première expérience en bureau d'études.
+      </p>
+      <div class="hero-cta">
+        <a href="#travaux" class="btn btn-fill">Voir mes travaux</a>
+        <a href="#contact" class="btn">Me contacter</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <!-- Decorative SVG map grid -->
+      <svg class="hero-map" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <!-- Horizontal grid lines -->
+        <line x1="0" y1="60" x2="600" y2="60"/>
+        <line x1="0" y1="120" x2="600" y2="120"/>
+        <line x1="0" y1="180" x2="600" y2="180"/>
+        <line x1="0" y1="240" x2="600" y2="240"/>
+        <line x1="0" y1="300" x2="600" y2="300"/>
+        <line x1="0" y1="360" x2="600" y2="360"/>
+        <line x1="0" y1="420" x2="600" y2="420"/>
+        <line x1="0" y1="480" x2="600" y2="480"/>
+        <line x1="0" y1="540" x2="600" y2="540"/>
+        <line x1="0" y1="600" x2="600" y2="600"/>
+        <line x1="0" y1="660" x2="600" y2="660"/>
+        <line x1="0" y1="720" x2="600" y2="720"/>
+        <line x1="0" y1="780" x2="600" y2="780"/>
+        <line x1="0" y1="840" x2="600" y2="840"/>
+        <!-- Vertical grid lines -->
+        <line x1="60" y1="0" x2="60" y2="900"/>
+        <line x1="120" y1="0" x2="120" y2="900"/>
+        <line x1="180" y1="0" x2="180" y2="900"/>
+        <line x1="240" y1="0" x2="240" y2="900"/>
+        <line x1="300" y1="0" x2="300" y2="900"/>
+        <line x1="360" y1="0" x2="360" y2="900"/>
+        <line x1="420" y1="0" x2="420" y2="900"/>
+        <line x1="480" y1="0" x2="480" y2="900"/>
+        <line x1="540" y1="0" x2="540" y2="900"/>
+        <!-- Circles for nodes -->
+        <circle cx="120" cy="180" r="3"/>
+        <circle cx="300" cy="300" r="5"/>
+        <circle cx="420" cy="480" r="3"/>
+        <circle cx="180" cy="600" r="4"/>
+        <circle cx="480" cy="240" r="3"/>
+        <circle cx="360" cy="660" r="6"/>
+        <circle cx="60" cy="420" r="3"/>
+        <circle cx="540" cy="540" r="4"/>
+      </svg>
+      <div class="hero-badge">
+        <div class="hero-badge-inner">
+          <p class="badge-label">Domaine d'étude</p>
+          <p class="badge-text">
+            Géographie &amp; <em>Aménagement</em><br>
+            du Territoire — L3
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFIL -->
+  <section id="profil">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Profil</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="profil-grid">
+      <div class="reveal">
+        <p class="profil-intro">
+          Motivé par une approche à la fois <strong>analytique et opérationnelle</strong> du territoire, je candidate aux meilleurs masters d'urbanisme et d'aménagement.
+        </p>
+        <p class="profil-body">
+          Étudiant en troisième année de Licence à l'Université Paul-Valéry Montpellier III, j'ai acquis une première expérience en bureau d'études complétée par une capacité éprouvée à m'investir pleinement dans des contextes exigeants — que ce soit lors de stages, de projets en commande réelle, ou de missions hospitalières sous forte contrainte temporelle.<br><br>
+          Dès la L2, j'ai entrepris des démarches personnelles de prospection auprès de collectivités et d'acteurs régionaux, convaincu qu'une expérience de terrain est indispensable pour construire un projet professionnel solide.
+        </p>
+      </div>
+
+      <div class="skills-block reveal">
+        <div class="skill-group">
+          <p class="skill-group-label">Outils &amp; méthodes</p>
+          <div class="skill-tags">
+            <span class="tag tag-dark">SIG / Cartographie</span>
+            <span class="tag tag-dark">Diagnostic territorial</span>
+            <span class="tag">Analyse spatiale</span>
+            <span class="tag">Rédaction de rapports</span>
+            <span class="tag">Enquête quantitative</span>
+            <span class="tag">Statistiques</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Logiciels</p>
+          <div class="skill-tags">
+            <span class="tag">Adobe Illustrator</span>
+            <span class="tag">Adobe InDesign</span>
+            <span class="tag">QGIS / Géoservice</span>
+            <span class="tag">Google Forms</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Langues</p>
+          <div class="skill-tags">
+            <span class="tag tag-dark">Français — natif</span>
+            <span class="tag">Anglais — B2+/C1</span>
+            <span class="tag">Espagnol — A2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAVAUX -->
+  <section id="travaux">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Travaux académiques</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="travaux-grid">
+
+      <!-- Travail 1 -->
+      <div class="travail-card reveal">
+        <div class="travail-num">01</div>
+        <div class="travail-body">
+          <p class="travail-type">Rapport d'enquête — L3 · 2025–2026</p>
+          <h3 class="travail-title">Impact de la ligne 5 du tramway sur Lavérune et Pignan</h3>
+          <p class="travail-desc">
+            Enquête quantitative auprès de 208 habitants portant sur les effets de la future ligne 5 du tramway : report modal, mobilité des travailleurs pendulaires, dynamiques démographiques et perception des chantiers. Traitement statistique (tests Khi², corrélations de Pearson), cartographie et visualisation des résultats.
+          </p>
+          <div class="travail-tags">
+            <span class="travail-tag">Enquête quantitative</span>
+            <span class="travail-tag">Mobilité urbaine</span>
+            <span class="travail-tag">Report modal</span>
+            <span class="travail-tag">Statistiques</span>
+            <span class="travail-tag">Cartographie</span>
+            <span class="travail-tag">Montpellier</span>
+          </div>
+        </div>
+        <div class="travail-arrow">→</div>
+      </div>
+
+      <!-- Travail 2 -->
+      <div class="travail-card reveal">
+        <div class="travail-num">02</div>
+        <div class="travail-body">
+          <p class="travail-type">Planche de diagnostic — L3 · 2025–2026</p>
+          <h3 class="travail-title">Carnon-Plage : l'énergie d'un été, l'ambition d'une année</h3>
+          <p class="travail-desc">
+            Diagnostic territorial complet de la station balnéaire de Carnon (Mauguio), couvrant la situation géographique, l'évolution historique depuis 1930, les dynamiques urbaines et socio-économiques. Élaboration de trois scénarios d'aménagement : réhabilitation urbaine avec densification, construction de halles de marché, création d'un centre culturel.
+          </p>
+          <div class="travail-tags">
+            <span class="travail-tag">Diagnostic territorial</span>
+            <span class="travail-tag">Scénarios d'aménagement</span>
+            <span class="travail-tag">Foncier littoral</span>
+            <span class="travail-tag">PLU / PPRI</span>
+            <span class="travail-tag">SIG</span>
+            <span class="travail-tag">Adobe</span>
+          </div>
+        </div>
+        <div class="travail-arrow">→</div>
+      </div>
+
+      <!-- Travail 3 -->
+      <div class="travail-card reveal">
+        <div class="travail-num">03</div>
+        <div class="travail-body">
+          <p class="travail-type">Dossier cartographique &amp; statistique — L2 · 2024–2025</p>
+          <h3 class="travail-title">Analyse de la sécurité cyclable de l'agglopôle de Sète</h3>
+          <p class="travail-desc">
+            Analyse de l'entretien et de la sécurité des infrastructures cyclables de l'agglomération de Sète à partir du Baromètre Parlons Vélo. Production de cartes choroplèthes, de diagrammes statistiques et d'une carte typologique croisant qualité des aménagements et sécurité perçue. Corrélation de Pearson (r = 0,87) et esprit critique sur les biais de participation.
+          </p>
+          <div class="travail-tags">
+            <span class="travail-tag">Cartographie thématique</span>
+            <span class="travail-tag">Statistiques</span>
+            <span class="travail-tag">Mobilités douces</span>
+            <span class="travail-tag">Corrélation de Pearson</span>
+            <span class="travail-tag">QGIS</span>
+            <span class="travail-tag">Agglopôle Sète</span>
+          </div>
+        </div>
+        <div class="travail-arrow">→</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EXPÉRIENCE -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Parcours</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="exp-grid">
+
+      <div class="exp-item reveal">
+        <p class="exp-date">Fév. 2026 · 2 semaines</p>
+        <h3 class="exp-title">Stage — Bureau d'études Urbanisme &amp; Aménagement</h3>
+        <p class="exp-org">Urban Projects — Montpellier (34)</p>
+        <p class="exp-desc">Participation aux missions opérationnelles : analyse de documents d'urbanisme, appui au diagnostic territorial, contribution à la production de livrables cartographiques. Première immersion dans les pratiques professionnelles et la relation aux collectivités territoriales.</p>
+        <div class="exp-kws">
+          <span class="exp-kw">Diagnostic territorial</span>
+          <span class="exp-kw">Documents d'urbanisme</span>
+          <span class="exp-kw">Cartographie</span>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <p class="exp-date">2026 · En cours</p>
+        <h3 class="exp-title">Projet urbain réel — Densification douce</h3>
+        <p class="exp-org">Commande réelle — Groupe Altémed · Montpellier (34)</p>
+        <p class="exp-desc">Réponse en atelier de groupe à une commande réelle portant sur la densification douce dans un quartier montpelliérain. Phases de diagnostic territorial, analyse du tissu urbain, formulation de préconisations. Expérience directe de la relation maître d'ouvrage / équipe projet.</p>
+        <div class="exp-kws">
+          <span class="exp-kw">Commande réelle</span>
+          <span class="exp-kw">Densification douce</span>
+          <span class="exp-kw">Maîtrise d'ouvrage</span>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <p class="exp-date">2024 – 2025</p>
+        <h3 class="exp-title">Brancardier — Hôpital central &amp; Urgences</h3>
+        <p class="exp-org">Hôpital Saint-Clair — Sète (34)</p>
+        <p class="exp-desc">Mission sur deux étés consécutifs et en janvier 2025, en service central et aux urgences. Gestion de situations critiques, coordination avec les équipes soignantes, sens aigu des responsabilités humaines dans des environnements sous contrainte temporelle forte.</p>
+        <div class="exp-kws">
+          <span class="exp-kw">Gestion de crise</span>
+          <span class="exp-kw">Coordination d'équipe</span>
+          <span class="exp-kw">Réactivité</span>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <p class="exp-date">2023 – 2026</p>
+        <h3 class="exp-title">Licence Géographie &amp; Aménagement du Territoire</h3>
+        <p class="exp-org">Université Paul-Valéry Montpellier III</p>
+        <p class="exp-desc">Formation pluridisciplinaire couvrant la cartographie, les statistiques spatiales, le diagnostic territorial, l'urbanisme et les politiques d'aménagement. Démarche proactive de prospection de stage dès la L2 auprès du Département de l'Hérault et de la Région Occitanie.</p>
+        <div class="exp-kws">
+          <span class="exp-kw">SIG</span>
+          <span class="exp-kw">Analyse spatiale</span>
+          <span class="exp-kw">Urbanisme</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Contact</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="contact-inner">
+      <div class="contact-text reveal">
+        <h3 class="contact-headline">Parlons<br>de territoire.</h3>
+        <p class="contact-body">
+          Disponible pour des échanges autour de mes candidatures en master, d'un stage, ou simplement d'un projet en commun. N'hésitez pas à me contacter directement.
+        </p>
+        <div style="margin-top:2.5rem;">
+          <a href="mailto:koenigvictor2@gmail.com" class="btn btn-fill">Envoyer un email</a>
+        </div>
+      </div>
+
+      <div class="contact-links reveal">
+        <a href="mailto:koenigvictor2@gmail.com" class="contact-link">
+          <div class="cl-icon">✉</div>
+          <div class="cl-info">
+            <span class="cl-label">Email</span>
+            <span class="cl-value">koenigvictor2@gmail.com</span>
+          </div>
+        </a>
+        <div class="contact-link">
+          <div class="cl-icon">📞</div>
+          <div class="cl-info">
+            <span class="cl-label">Téléphone</span>
+            <span class="cl-value">+33 7 67 17 15 43</span>
+          </div>
+        </div>
+        <div class="contact-link">
+          <div class="cl-icon">📍</div>
+          <div class="cl-info">
+            <span class="cl-label">Localisation</span>
+            <span class="cl-value">Pignan (34) — Véhiculé, permis B</span>
+          </div>
+        </div>
+        <div class="contact-link">
+          <div class="cl-icon">🎓</div>
+          <div class="cl-info">
+            <span class="cl-label">Formation</span>
+            <span class="cl-value">Université Paul-Valéry Montpellier III</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Victor Koenig</p>
+    <p>Géographie &amp; Aménagement du Territoire — L3 · Montpellier</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Smooth active nav
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
